@@ -51,6 +51,8 @@ public class ListProcessor {
                     refreshByPath();
                 }
         );
+
+        this.drivers = drivers;
     }
 
     public static ListProcessor of(ListView<MutablePair<String, Path>> pathListView, TextField label, ComboBox<String> drivers) {
@@ -121,6 +123,9 @@ public class ListProcessor {
 
         pathListView.getFocusModel().focus(selectedIndex);
         pathListView.requestFocus();
-//        pathListView.requestFocus();
+    }
+
+    public void setFocusOnComboBox(){
+        drivers.requestFocus();
     }
 }

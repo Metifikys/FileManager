@@ -8,6 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import metifikys.list.ListProcessor;
 import metifikys.list.controller.ListsController;
 import metifikys.list.controller.comands.FileCommand;
@@ -51,7 +54,7 @@ public class MainController {
 
         // todo from config file
         leftDrivers.getSelectionModel().select(0);
-        rightDrivers.getSelectionModel().select(1);
+        rightDrivers.getSelectionModel().select(0);
 
         listsController = ListsController.of(
                 ListProcessor.of(leftList, leftText, leftDrivers),
@@ -62,9 +65,9 @@ public class MainController {
 
 
         // todo from config file
-        setOnClickCommandInButton(copyButton,   FileCommand.COPY);
-        setOnClickCommandInButton(cutButton,    FileCommand.CUT);
-        setOnClickCommandInButton(deleteButton, FileCommand.DELETE);
+        setOnClickCommandInButton(copyButton,     FileCommand.COPY);
+        setOnClickCommandInButton(cutButton,      FileCommand.CUT);
+        setOnClickCommandInButton(deleteButton,   FileCommand.DELETE);
         setOnClickCommandInButton(mkFolderButton, FileCommand.CREATE_FOLDER);
     }
 
@@ -87,10 +90,24 @@ public class MainController {
 
         });
 
+
+        final KeyCombination leftComb  = new KeyCodeCombination(KeyCode.F1, KeyCombination.ALT_DOWN);
+        final KeyCombination rightComb = new KeyCodeCombination(KeyCode.F2, KeyCombination.ALT_DOWN);
+
         scene.setOnKeyReleased(event -> {
 
-            switch (event.getCode()){
-                case TAB: listsController.changeFocus(); break;
+            if (leftComb.match(event)){
+                listsController.focusOnComboBoxLeft();
+            }
+            else if (rightComb.match(event)){
+                listsController.focusOnComboBoxRight();
+            }
+            else {
+                switch (event.getCode()) {
+                    case TAB:
+                        listsController.changeFocus();
+                        break;
+                }
             }
         });
     }

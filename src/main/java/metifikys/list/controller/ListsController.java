@@ -38,4 +38,12 @@ public class ListsController {
         current.setFocusOnList();
     }
 
+    public void focusOnComboBoxLeft(){
+        left.setFocusOnComboBox();
+    }
+
+
+    public void focusOnComboBoxRight(){
+        right.setFocusOnComboBox();
+    }
 }
