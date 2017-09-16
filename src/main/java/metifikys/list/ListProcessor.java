@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import metifikys.state.Configurable;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.IOException;
@@ -13,17 +14,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import static java.nio.file.Files.isDirectory;
 
-public class ListProcessor {
+public class ListProcessor implements Configurable {
 
     private ListView<MutablePair<String, Path>> pathListView;
     private TextField text;
     private ComboBox<String> drivers;
 
-    private Path currentPath = Paths.get("D:\\");
+    private Path currentPath;
 
     private ListProcessor(ListView<MutablePair<String, Path>> pathListView, TextField label, ComboBox<String> drivers) {
 
@@ -44,7 +46,7 @@ public class ListProcessor {
 
         });
 
-        currentPath = Paths.get(drivers.getSelectionModel().getSelectedItem());
+//        currentPath = Paths.get(drivers.getSelectionModel().getSelectedItem());
         drivers.valueProperty().addListener(
                 event -> {
                     currentPath = Paths.get(drivers.getSelectionModel().getSelectedItem());
@@ -56,7 +58,7 @@ public class ListProcessor {
     }
 
     public static ListProcessor of(ListView<MutablePair<String, Path>> pathListView, TextField label, ComboBox<String> drivers) {
-        return new ListProcessor(pathListView, label, drivers).refreshByPath();
+        return new ListProcessor(pathListView, label, drivers);
     }
 
     public ListProcessor refreshByPath() {
@@ -127,5 +129,21 @@ public class ListProcessor {
 
     public void setFocusOnComboBox(){
         drivers.requestFocus();
+    }
+
+    @Override
+    public void save(Preferences prefs) {
+        prefs.put(pathListView.getId(), currentPath.toString());
+    }
+
+    @Override
+    public void load(Preferences prefs) {
+
+        String val = prefs.get(pathListView.getId(), null);
+        currentPath = val == null
+                ? Paths.get(drivers.getSelectionModel().getSelectedItem())
+                : Paths.get(val);
+
+        refreshByPath();
     }
 }

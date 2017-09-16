@@ -11,15 +11,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.stage.Stage;
 import metifikys.list.ListProcessor;
 import metifikys.list.controller.ListsController;
 import metifikys.list.controller.comands.FileCommand;
+import metifikys.state.StateController;
 import org.apache.commons.lang3.tuple.MutablePair;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 public class MainController {
 
@@ -42,7 +45,9 @@ public class MainController {
     @FXML
     private void initialize() {
 
-//        FileSystemView fsv = FileSystemView.getFileSystemView();
+//        Preferences prefs = Preferences.userRoot().node("metifikys.FileManager");
+//        prefs.put("left", "left");
+//        System.out.println(prefs.get("left", ""));
 
         List<String> names = new ArrayList<>();
         for(File path : File.listRoots())
@@ -60,6 +65,7 @@ public class MainController {
                 ListProcessor.of(leftList, leftText, leftDrivers),
                 ListProcessor.of(rightList, rightText, rightDrivers)
         );
+        StateController.addElement(listsController);
 
         System.out.println("initialized");
 
@@ -96,13 +102,11 @@ public class MainController {
 
         scene.setOnKeyReleased(event -> {
 
-            if (leftComb.match(event)){
+            if (leftComb.match(event)) {
                 listsController.focusOnComboBoxLeft();
-            }
-            else if (rightComb.match(event)){
+            } else if (rightComb.match(event)) {
                 listsController.focusOnComboBoxRight();
-            }
-            else {
+            } else {
                 switch (event.getCode()) {
                     case TAB:
                         listsController.changeFocus();

@@ -2,8 +2,13 @@ package metifikys.list.controller;
 
 import metifikys.list.ListProcessor;
 import metifikys.list.controller.comands.FileCommand;
+import metifikys.state.Configurable;
 
-public class ListsController {
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.prefs.Preferences;
+
+public class ListsController implements Configurable {
 
     private ListProcessor left;
     private ListProcessor right;
@@ -17,9 +22,8 @@ public class ListsController {
     public static ListsController of(ListProcessor left, ListProcessor right){
         ListsController listsController = new ListsController(left, right);
 
-        left .getFocusProperty().addListener( (observable, oldValue, newValue) -> listsController.current = left );
-        right.getFocusProperty().addListener( (observable, oldValue, newValue) -> listsController.current = right );
-
+        left .getFocusProperty().addListener((observable, oldValue, newValue) -> listsController.current = left);
+        right.getFocusProperty().addListener((observable, oldValue, newValue) -> listsController.current = right);
         return listsController;
     }
 
@@ -42,8 +46,20 @@ public class ListsController {
         left.setFocusOnComboBox();
     }
 
-
     public void focusOnComboBoxRight(){
         right.setFocusOnComboBox();
+    }
+
+
+    @Override
+    public void save(Preferences prefs) {
+        left.save(prefs);
+        right.save(prefs);
+    }
+
+    @Override
+    public void load(Preferences prefs) {
+        right.load(prefs);
+        left.load(prefs);
     }
 }

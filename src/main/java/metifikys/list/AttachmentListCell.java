@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
-    
+
     private static IconGetter iconGetter;
     private static Map<String, Image> mapOfFileExtToSmallIcon = new HashMap<String, Image>();
 
@@ -28,8 +28,6 @@ public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
         else if (SystemUtils.IS_OS_WINDOWS){
             iconGetter = new WindowsIconGetter();
         }
-
-        System.out.println(iconGetter);
     }
 
 

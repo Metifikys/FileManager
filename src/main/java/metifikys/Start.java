@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import metifikys.state.StateController;
 
 // TODO Spring DI
 public class Start extends Application {
@@ -22,6 +23,7 @@ public class Start extends Application {
         loader.<MainController>getController()
                 .setScene(scene);
 
+        primaryStage.setOnCloseRequest(event -> StateController.saveElements());
         primaryStage.setTitle("FileManager");
         primaryStage.setScene(scene);
         primaryStage.show();
