@@ -4,9 +4,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 
+import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,8 +17,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
-
+    
+    private static IconGetter iconGetter;
     private static Map<String, Image> mapOfFileExtToSmallIcon = new HashMap<String, Image>();
+
+    static {
+        if (SystemUtils.IS_OS_MAC){
+            iconGetter = new MacOsIconGetter();
+        }
+        else if (SystemUtils.IS_OS_WINDOWS){
+            iconGetter = new WindowsIconGetter();
+        }
+
+        System.out.println(iconGetter);
+    }
+
 
     @Override
     public void updateItem(MutablePair<String, Path> item, boolean empty) {
@@ -44,21 +58,6 @@ public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
         return ext;
     }
 
-    private static javax.swing.Icon getJSwingIconFromFileSystem(File file) {
-
-        // Windows {
-        FileSystemView view = FileSystemView.getFileSystemView();
-        javax.swing.Icon icon = view.getSystemIcon(file);
-        // }
-
-        // OS X {
-        //final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
-        //javax.swing.Icon icon = fc.getUI().getFileView(fc).getIcon(file);
-        // }
-
-        return icon;
-    }
-
     private static Image getFileIcon(String fname) {
 
         final String ext = getFileExt(fname);
@@ -68,13 +67,13 @@ public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
 
             File file = new File(fname);
             if (file.exists()) {
-                jswingIcon = getJSwingIconFromFileSystem(file);
+                jswingIcon = iconGetter.getIconFroFile(file);
             }
             else {
                 File tempFile = null;
                 try {
                     tempFile = File.createTempFile("icon", ext);
-                    jswingIcon = getJSwingIconFromFileSystem(tempFile);
+                    jswingIcon = iconGetter.getIconFroFile(tempFile);
                 }
                 catch (IOException ignored) {
                     // Cannot create temporary file.
@@ -100,5 +99,29 @@ public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
 
         jswingIcon.paintIcon(null, bufferedImage.getGraphics(), 0, 0);
         return SwingFXUtils.toFXImage(bufferedImage, null);
+    }
+
+    private interface IconGetter{
+        javax.swing.Icon getIconFroFile(File file);
+    }
+
+    private static class WindowsIconGetter implements IconGetter{
+
+        private final FileSystemView view = FileSystemView.getFileSystemView();
+
+        @Override
+        public Icon getIconFroFile(File file) {
+            return view.getSystemIcon(file);
+        }
+    }
+
+    private static class MacOsIconGetter implements IconGetter{
+
+        private final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+
+        @Override
+        public Icon getIconFroFile(File file) {
+           return fc.getUI().getFileView(fc).getIcon(file);
+        }
     }
 }
