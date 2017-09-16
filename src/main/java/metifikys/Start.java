@@ -4,8 +4,11 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import metifikys.state.StateController;
+
+import java.net.URL;
 
 // TODO Spring DI
 public class Start extends Application {

@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import metifikys.list.ListProcessor;
 import metifikys.list.controller.ListsController;
@@ -45,10 +46,6 @@ public class MainController {
     @FXML
     private void initialize() {
 
-//        Preferences prefs = Preferences.userRoot().node("metifikys.FileManager");
-//        prefs.put("left", "left");
-//        System.out.println(prefs.get("left", ""));
-
         List<String> names = new ArrayList<>();
         for(File path : File.listRoots())
             names.add(path.toString());
@@ -65,11 +62,8 @@ public class MainController {
                 ListProcessor.of(leftList, leftText, leftDrivers),
                 ListProcessor.of(rightList, rightText, rightDrivers)
         );
-        StateController.addElement(listsController);
 
         System.out.println("initialized");
-
-
         // todo from config file
         setOnClickCommandInButton(copyButton,     FileCommand.COPY);
         setOnClickCommandInButton(cutButton,      FileCommand.CUT);

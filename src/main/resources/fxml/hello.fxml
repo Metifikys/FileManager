@@ -11,6 +11,10 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="776.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="metifikys.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -24,26 +28,26 @@
        <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" GridPane.rowIndex="1">
 
                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                   <TextField fx:id="leftText" editable="false" layoutX="85.0" layoutY="1.0" prefHeight="31.0" prefWidth="376.0" text="Label" AnchorPane.leftAnchor="85" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" GridPane.rowIndex="0" />
-                   <ComboBox fx:id="leftDrivers" layoutY="1.0" prefWidth="80.0" GridPane.rowIndex="0" />
+                   <JFXTextField fx:id="leftText" editable="false" layoutX="85.0" layoutY="1.0" prefHeight="31.0" prefWidth="376.0" text="Label" AnchorPane.leftAnchor="85" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" GridPane.rowIndex="0" />
+                   <JFXComboBox fx:id="leftDrivers" layoutY="1.0" prefWidth="80.0" GridPane.rowIndex="0" />
 
-                   <ListView fx:id="leftList" layoutY="32.0" prefHeight="634.0" prefWidth="445.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32" GridPane.rowIndex="1" />
+                   <JFXListView fx:id="leftList" layoutY="32.0" prefHeight="634.0" prefWidth="445.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32" GridPane.rowIndex="1" />
                </AnchorPane>
 
                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="Infinity">
-                        <TextField fx:id="rightText" editable="false" layoutX="85.0" layoutY="1.0" prefHeight="31.0" prefWidth="376.0" text="Label" AnchorPane.leftAnchor="85" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" GridPane.rowIndex="0" />
+                        <JFXTextField fx:id="rightText" editable="false" layoutX="85.0" layoutY="1.0" prefHeight="31.0" prefWidth="376.0" text="Label" AnchorPane.leftAnchor="85" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0" GridPane.rowIndex="0" />
 
-                        <ComboBox fx:id="rightDrivers" layoutY="1.0" prefWidth="80.0" GridPane.rowIndex="0" />
+                        <JFXComboBox fx:id="rightDrivers" layoutY="1.0" prefWidth="80.0" GridPane.rowIndex="0" />
 
-                       <ListView fx:id="rightList" layoutY="32.0" prefHeight="634.0" prefWidth="445.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32" GridPane.rowIndex="1" />
+                       <JFXListView fx:id="rightList" layoutY="32.0" prefHeight="634.0" prefWidth="445.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32" GridPane.rowIndex="1" />
                </AnchorPane>
        </SplitPane>
 
       <FlowPane alignment="BOTTOM_CENTER" columnHalignment="CENTER" prefHeight="32" prefWidth="200.0" GridPane.rowIndex="2">
-            <Button fx:id="copyButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="5 Copy" />
-            <Button fx:id="cutButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="6 Cut" />
-            <Button fx:id="mkFolderButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="7 McFolder" />
-            <Button fx:id="deleteButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="8 Delete" />
+            <JFXButton fx:id="copyButton"  mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="5 Copy" />
+            <JFXButton fx:id="cutButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="6 Cut" />
+            <JFXButton fx:id="mkFolderButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="7 McFolder" />
+            <JFXButton fx:id="deleteButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="8 Delete" />
       </FlowPane>
 
 
