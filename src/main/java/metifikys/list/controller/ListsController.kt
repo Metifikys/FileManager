@@ -1,65 +1,58 @@
-package metifikys.list.controller;
+package metifikys.list.controller
 
-import metifikys.list.ListProcessor;
-import metifikys.list.controller.comands.FileCommand;
-import metifikys.state.Configurable;
+import metifikys.list.ListProcessor
+import metifikys.list.controller.comands.FileCommand
+import metifikys.state.Configurable
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.prefs.Preferences;
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.util.prefs.Preferences
 
-public class ListsController implements Configurable {
+class ListsController private constructor(private val left: ListProcessor, private val right: ListProcessor) : Configurable {
+    private lateinit var current: ListProcessor
 
-    private ListProcessor left;
-    private ListProcessor right;
-    private ListProcessor current;
+    fun processCommand(fileCommand: FileCommand) {
 
-    private ListsController(ListProcessor left, ListProcessor right) {
-        this.left = left;
-        this.right = right;
+        val to = if (left === current) right else left
+        fileCommand.process(current, to)
+
+        left.refreshByPath()
+        right.refreshByPath()
     }
 
-    public static ListsController of(ListProcessor left, ListProcessor right){
-        ListsController listsController = new ListsController(left, right);
+    fun changeFocus() {
 
-        left .getFocusProperty().addListener((observable, oldValue, newValue) -> listsController.current = left);
-        right.getFocusProperty().addListener((observable, oldValue, newValue) -> listsController.current = right);
-        return listsController;
+        current = if (left === current) right else left
+        current.setFocusOnList()
     }
 
-    public void processCommand(FileCommand fileCommand){
-
-        ListProcessor to =  left == current ? right : left;
-        fileCommand.process(current, to);
-
-        left.refreshByPath();
-        right.refreshByPath();
+    fun focusOnComboBoxLeft() {
+        left.setFocusOnComboBox()
     }
 
-    public void changeFocus(){
-
-        current = left == current ? right : left;
-        current.setFocusOnList();
-    }
-
-    public void focusOnComboBoxLeft(){
-        left.setFocusOnComboBox();
-    }
-
-    public void focusOnComboBoxRight(){
-        right.setFocusOnComboBox();
+    fun focusOnComboBoxRight() {
+        right.setFocusOnComboBox()
     }
 
 
-    @Override
-    public void save(Preferences prefs) {
-        left.save(prefs);
-        right.save(prefs);
+    override fun save(prefs: Preferences) {
+        left.save(prefs)
+        right.save(prefs)
     }
 
-    @Override
-    public void load(Preferences prefs) {
-        right.load(prefs);
-        left.load(prefs);
+    override fun load(prefs: Preferences) {
+        right.load(prefs)
+        left.load(prefs)
+    }
+
+    companion object {
+
+        fun of(left: ListProcessor, right: ListProcessor): ListsController {
+            val listsController = ListsController(left, right)
+
+            left.focusProperty.addListener { _, _, _ -> listsController.current = left }
+            right.focusProperty.addListener { _, _, _ -> listsController.current = right }
+            return listsController
+        }
     }
 }

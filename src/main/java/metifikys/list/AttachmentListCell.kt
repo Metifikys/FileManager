@@ -1,125 +1,116 @@
-package metifikys.list;
+package metifikys.list
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import org.apache.commons.lang3.SystemUtils;
-import org.apache.commons.lang3.tuple.MutablePair;
+import javafx.embed.swing.SwingFXUtils
+import javafx.scene.control.ListCell
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
+import org.apache.commons.lang3.SystemUtils
+import org.apache.commons.lang3.tuple.MutablePair
 
-import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import javax.swing.*
+import javax.swing.filechooser.FileSystemView
+import java.awt.image.BufferedImage
+import java.io.File
+import java.io.IOException
+import java.nio.file.Path
+import java.util.HashMap
 
-public class AttachmentListCell extends ListCell<MutablePair<String, Path>> {
+class AttachmentListCell : ListCell<MutablePair<String, Path>>() {
 
-    private static IconGetter iconGetter;
-    private static Map<String, Image> mapOfFileExtToSmallIcon = new HashMap<String, Image>();
+    public override fun updateItem(item: MutablePair<String, Path>?, empty: Boolean) {
 
-    static {
-        if (SystemUtils.IS_OS_MAC){
-            iconGetter = new MacOsIconGetter();
-        }
-        else if (SystemUtils.IS_OS_WINDOWS){
-            iconGetter = new WindowsIconGetter();
-        }
-    }
-
-
-    @Override
-    public void updateItem(MutablePair<String, Path> item, boolean empty) {
-
-        super.updateItem(item, empty);
+        super.updateItem(item, empty)
         if (empty) {
-            setGraphic(null);
-            setText(null);
-        }
-        else {
-            Image fxImage = getFileIcon(item.getValue().toString());
-            ImageView imageView = new ImageView(fxImage);
-            setGraphic(imageView);
-            setText(item.getKey());
+            graphic = null
+            text = null
+        } else {
+            val fxImage = getFileIcon(item?.value.toString())
+            val imageView = ImageView(fxImage)
+            graphic = imageView
+            text = item?.key
         }
     }
 
-    private static String getFileExt(String fname) {
-        String ext = ".";
-        int p = fname.lastIndexOf('.');
-        if (p >= 0) {
-            ext = fname.substring(p);
-        }
-        return ext;
+    private interface IconGetter {
+        fun getIconFroFile(file: File): javax.swing.Icon
     }
 
-    private static Image getFileIcon(String fname) {
+    private class WindowsIconGetter : IconGetter {
 
-        final String ext = getFileExt(fname);
-        Image fileIcon = mapOfFileExtToSmallIcon.get(ext);
-        if (fileIcon == null) {
-            javax.swing.Icon jswingIcon = null;
+        private val view = FileSystemView.getFileSystemView()
 
-            File file = new File(fname);
-            if (file.exists()) {
-                jswingIcon = iconGetter.getIconFroFile(file);
-            }
-            else {
-                File tempFile = null;
-                try {
-                    tempFile = File.createTempFile("icon", ext);
-                    jswingIcon = iconGetter.getIconFroFile(tempFile);
-                }
-                catch (IOException ignored) {
-                    // Cannot create temporary file.
-                }
-                finally {
-                    if (tempFile != null)
-                        tempFile.delete();
-                }
-            }
+        override fun getIconFroFile(file: File): Icon {
+            return view.getSystemIcon(file)
+        }
+    }
 
-            if (jswingIcon != null) {
-                fileIcon = jswingIconToImage(jswingIcon);
-                mapOfFileExtToSmallIcon.put(ext, fileIcon);
+    private class MacOsIconGetter : IconGetter {
+
+        private val fc = javax.swing.JFileChooser()
+
+        override fun getIconFroFile(file: File): Icon {
+            return fc.ui.getFileView(fc).getIcon(file)
+        }
+    }
+
+    companion object {
+
+        private var iconGetter: IconGetter? = null
+        private val mapOfFileExtToSmallIcon = HashMap<String, Image>()
+
+        init {
+            if (SystemUtils.IS_OS_MAC) {
+                iconGetter = MacOsIconGetter()
+            } else if (SystemUtils.IS_OS_WINDOWS) {
+                iconGetter = WindowsIconGetter()
             }
         }
 
-        return fileIcon;
-    }
-
-    private static Image jswingIconToImage(javax.swing.Icon jswingIcon) {
-        BufferedImage bufferedImage =
-                new BufferedImage(jswingIcon.getIconWidth(), jswingIcon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        jswingIcon.paintIcon(null, bufferedImage.getGraphics(), 0, 0);
-        return SwingFXUtils.toFXImage(bufferedImage, null);
-    }
-
-    private interface IconGetter{
-        javax.swing.Icon getIconFroFile(File file);
-    }
-
-    private static class WindowsIconGetter implements IconGetter{
-
-        private final FileSystemView view = FileSystemView.getFileSystemView();
-
-        @Override
-        public Icon getIconFroFile(File file) {
-            return view.getSystemIcon(file);
+        private fun getFileExt(fname: String): String {
+            var ext = "."
+            val p = fname.lastIndexOf('.')
+            if (p >= 0) {
+                ext = fname.substring(p)
+            }
+            return ext
         }
-    }
 
-    private static class MacOsIconGetter implements IconGetter{
+        private fun getFileIcon(fname: String): Image? {
 
-        private final javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+            val ext = getFileExt(fname)
+            var fileIcon: Image? = mapOfFileExtToSmallIcon[ext]
+            if (fileIcon == null) {
+                var jswingIcon: javax.swing.Icon? = null
 
-        @Override
-        public Icon getIconFroFile(File file) {
-           return fc.getUI().getFileView(fc).getIcon(file);
+                val file = File(fname)
+                if (file.exists()) {
+                    jswingIcon = iconGetter!!.getIconFroFile(file)
+                } else {
+                    var tempFile: File? = null
+                    try {
+                        tempFile = File.createTempFile("icon", ext)
+                        jswingIcon = iconGetter!!.getIconFroFile(tempFile)
+                    } catch (ignored: IOException) {
+                        // Cannot create temporary file.
+                    } finally {
+                        tempFile?.delete()
+                    }
+                }
+
+                if (jswingIcon != null) {
+                    fileIcon = jswingIconToImage(jswingIcon)
+                    mapOfFileExtToSmallIcon[ext] = fileIcon
+                }
+            }
+
+            return fileIcon
+        }
+
+        private fun jswingIconToImage(jswingIcon: javax.swing.Icon): Image {
+            val bufferedImage = BufferedImage(jswingIcon.iconWidth, jswingIcon.iconHeight, BufferedImage.TYPE_INT_ARGB)
+
+            jswingIcon.paintIcon(null, bufferedImage.graphics, 0, 0)
+            return SwingFXUtils.toFXImage(bufferedImage, null)
         }
     }
 }

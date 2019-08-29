@@ -1,118 +1,105 @@
-package metifikys.list.controller.comands;
+package metifikys.list.controller.comands
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
-import metifikys.list.ListProcessor;
-import org.apache.commons.io.FileUtils;
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.scene.control.TextInputDialog
+import metifikys.list.ListProcessor
+import org.apache.commons.io.FileUtils
 
-import javax.swing.*;
-import java.io.File;
-import java.io.IOException;
+import javax.swing.*
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
 // todo progress for File commands
 // todo FilesHelper
-public enum FileCommand {
+enum class FileCommand {
 
 
-    COPY{
-        @Override
-        public void process(ListProcessor from, ListProcessor to) {
+    COPY {
+        override fun process(from: ListProcessor, to: ListProcessor) {
 
             try {
-                File srcFile = from.getSelected().toFile();
+                val srcFile = from.selected.toFile()
 
-                if (srcFile.isFile())
-                    FileUtils.copyFileToDirectory(srcFile, to.getCurrentPath().toFile());
+                if (srcFile.isFile)
+                    FileUtils.copyFileToDirectory(srcFile, to.currentPath!!.toFile())
                 else
-                    FileUtils.copyDirectoryToDirectory(srcFile, to.getCurrentPath().toFile());
+                    FileUtils.copyDirectoryToDirectory(srcFile, to.currentPath!!.toFile())
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
     },
-    CUT{
-        @Override
-        public void process(ListProcessor from, ListProcessor to) {
+    CUT {
+        override fun process(from: ListProcessor, to: ListProcessor) {
 
             try {
-                File srcFile = from.getSelected().toFile();
+                val srcFile = from.selected.toFile()
 
-                if (srcFile.isFile()) {
-                    FileUtils.copyFileToDirectory(srcFile, to.getCurrentPath().toFile());
-                    FileUtils.deleteQuietly(srcFile);
+                if (srcFile.isFile) {
+                    FileUtils.copyFileToDirectory(srcFile, to.currentPath!!.toFile())
+                    FileUtils.deleteQuietly(srcFile)
+                } else {
+                    FileUtils.copyDirectoryToDirectory(srcFile, to.currentPath!!.toFile())
+                    FileUtils.deleteDirectory(srcFile)
                 }
-                else {
-                    FileUtils.copyDirectoryToDirectory(srcFile, to.getCurrentPath().toFile());
-                    FileUtils.deleteDirectory(srcFile);
-                }
 
 
-            }
-            catch (IOException e) {
-                e.printStackTrace();
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
 
         }
     },
-    DELETE{
-        @Override
-        public void process(ListProcessor from, ListProcessor to) {
+    DELETE {
+        override fun process(from: ListProcessor, to: ListProcessor) {
 
-            File file = from.getSelected().toFile();
+            val file = from.selected.toFile()
 
-            new Alert(Alert.AlertType.WARNING,
-                    "Do you want to delete " + file.getName() + "?",
+            Alert(Alert.AlertType.WARNING,
+                    "Do you want to delete " + file.name + "?",
                     ButtonType.CANCEL, ButtonType.OK)
                     .showAndWait()
-                    .ifPresent(
-
-                    rs ->{
-                        if (rs.getButtonData().isCancelButton()){
-                            return;
-                        }
-                        else {
-                            if (file.isFile()) {
-                                file.delete();
+                    .ifPresent {
+                        if (!it.getButtonData().isCancelButton()){
+                            if (file.isFile) {
+                                file.delete()
                             }
                             else {
                                 try {
-                                    FileUtils.deleteDirectory(file);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Files.delete(file.toPath())
+                                }
+                                catch (ex: IOException) {
+                                    ex.printStackTrace();
                                 }
                             }
                         }
                     }
-            );
         }
     },
-    CREATE_FOLDER{
-        @Override
-        public void process(ListProcessor from, ListProcessor to) {
+    CREATE_FOLDER {
+        override fun process(from: ListProcessor, to: ListProcessor) {
 
-            TextInputDialog inputDialog = new TextInputDialog("");
-            inputDialog.setTitle("New folder");
-//            inputDialog.setContentText("Input new folder name");
-            inputDialog.setHeaderText("Input new folder name");
+            val inputDialog = TextInputDialog("")
+            inputDialog.title = "New folder"
+            //            inputDialog.setContentText("Input new folder name");
+            inputDialog.headerText = "Input new folder name"
 
-            inputDialog.showAndWait().ifPresent(
-                    rs -> {
-                        if (!rs.isEmpty()){
-                            File file = new File(from.getCurrentPath().toFile(), rs);
-                            if (file.exists()){
-                                // todo message
-                                System.out.println("is exist");
-                            }
-                            else {
-                                file.mkdirs();
-                            }
-                        }
+            inputDialog.showAndWait().ifPresent { rs ->
+                if (!rs.isEmpty()) {
+                    val file = File(from.currentPath!!.toFile(), rs)
+                    if (file.exists()) {
+                        // todo message
+                        println("is exist")
+                    } else {
+                        file.mkdirs()
                     }
-            );
+                }
+            }
         }
     };
 
-    public abstract void process(ListProcessor from, ListProcessor to);
+    abstract fun process(from: ListProcessor, to: ListProcessor)
 }

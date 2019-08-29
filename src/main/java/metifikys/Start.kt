@@ -1,31 +1,36 @@
-package metifikys;
+package metifikys
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-import metifikys.state.StateController;
+import javafx.application.Application
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.stage.Stage
+import metifikys.state.StateController
 
 // TODO Spring DI
-public class Start extends Application {
+class Start : Application() {
 
-    public static void main(String[] args) {
-        launch(args);
+    @Throws(Exception::class)
+    override fun start(primaryStage: Stage) {
+        val fxmlFile = "/fxml/hello.fxml"
+        val loader = FXMLLoader()
+        val root = loader.load<Parent>(javaClass.getResourceAsStream(fxmlFile))
+        val scene = Scene(root)
+
+        loader.getController<MainController>()
+                .setScene(scene)
+
+        primaryStage.setOnCloseRequest { event -> StateController.saveElements() }
+        primaryStage.title = "FileManager"
+        primaryStage.scene = scene
+        primaryStage.show()
     }
 
-    public void start(Stage primaryStage) throws Exception {
-        String fxmlFile = "/fxml/hello.fxml";
-        FXMLLoader loader = new FXMLLoader();
-        Parent root = loader.load(getClass().getResourceAsStream(fxmlFile));
-        Scene scene = new Scene(root);
+    companion object {
 
-        loader.<MainController>getController()
-                .setScene(scene);
-
-        primaryStage.setOnCloseRequest(event -> StateController.saveElements());
-        primaryStage.setTitle("FileManager");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        @JvmStatic
+        fun main(args: Array<String>) {
+            launch(Start::class.java, *args)
+        }
     }
 }

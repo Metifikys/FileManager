@@ -1,12 +1,12 @@
-package metifikys.state;
+package metifikys.state
 
-import java.util.prefs.Preferences;
+import java.util.prefs.Preferences
 
 /**
  * Created by Metifikys on 16.09.2017.
  */
-public interface Configurable {
+interface Configurable {
 
-    void save(Preferences prefs);
-    void load(Preferences prefs);
+    fun save(prefs: Preferences)
+    fun load(prefs: Preferences)
 }
