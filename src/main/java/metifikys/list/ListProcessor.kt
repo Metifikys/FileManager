@@ -117,11 +117,11 @@ class ListProcessor private constructor(private val pathListView: ListView<Mutab
 
     override fun load(prefs: Preferences) {
 
-        val `val` = prefs.get(pathListView.id, null)
-        currentPath = if (`val` == null)
+        val prefsVal = prefs.get(pathListView.id, null)
+        currentPath = if (prefsVal == null)
             Paths.get(drivers.selectionModel.selectedItem)
         else
-            Paths.get(`val`)
+            Paths.get(prefsVal)
 
         refreshByPath()
     }
