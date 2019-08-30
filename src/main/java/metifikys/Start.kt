@@ -20,7 +20,7 @@ class Start : Application() {
         loader.getController<MainController>()
                 .setScene(scene)
 
-        primaryStage.setOnCloseRequest { event -> StateController.saveElements() }
+        primaryStage.setOnCloseRequest { _ -> StateController.saveElements() }
         primaryStage.title = "FileManager"
         primaryStage.scene = scene
         primaryStage.show()
